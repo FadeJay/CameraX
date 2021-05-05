@@ -124,8 +124,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
          imageCapture = builder
-//                .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
+                .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
                 .build();
+
+        Log.i("MainAc", "Rotation "+this.getWindowManager().getDefaultDisplay().getRotation() );
 
         preview.setSurfaceProvider(mPreviewView.createSurfaceProvider());
 
