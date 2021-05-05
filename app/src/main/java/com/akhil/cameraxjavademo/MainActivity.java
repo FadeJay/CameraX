@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPreviewView = findViewById(R.id.previewView);
+        mPreviewView.setRotation(180f);
 
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
