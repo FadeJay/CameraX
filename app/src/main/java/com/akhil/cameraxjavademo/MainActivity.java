@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Executor executor = Executors.newSingleThreadExecutor();
     private int REQUEST_CODE_PERMISSIONS = 1001;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
-    ImageCapture imageCapture;
+
 
     PreviewView mPreviewView;
 
@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
         mPreviewView = findViewById(R.id.previewView);
 
-        if(allPermissionsGranted()){
+        if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
-        } else{
+        } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
     }
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTick(long l) {
                 try {
-                   takePic();
-                } catch (Exception e){
+//                    takePic();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -123,46 +123,42 @@ public class MainActivity extends AppCompatActivity {
             hdrImageCaptureExtender.enableExtension(cameraSelector);
         }
 
-        imageCapture.setTargetRotation(Surface.ROTATION_180);
-         imageCapture = builder
+        ImageCapture imageCapture = builder
+                .setTargetRotation(Surface.ROTATION_180)
                 .build();
 
 
-        Log.i("MainAc", "Rotation "+this.getWindowManager().getDefaultDisplay().getRotation() );
+        Log.i("MainAc", "Rotation " + this.getWindowManager().getDefaultDisplay().getRotation());
 
         preview.setSurfaceProvider(mPreviewView.createSurfaceProvider());
 
-        Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, preview, imageAnalysis, imageCapture);
-
-
-
+        Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview, imageAnalysis, imageCapture);
 
 
     }
 
-    private void takePic(){
-        SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),  mDateFormat.format(new Date())+ ".jpg");
-
-        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
-        imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback () {
-            @Override
-            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "Image Saved successfully", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-            @Override
-            public void onError(@NonNull ImageCaptureException error) {
-                error.printStackTrace();
-            }
-        });
-
-
-    }
+//    private void takePic() {
+//        SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+//        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), mDateFormat.format(new Date()) + ".jpg");
+//
+//        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
+//        imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
+//            @Override
+//            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+//                new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(MainActivity.this, "Image Saved successfully", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(@NonNull ImageCaptureException error) {
+//                error.printStackTrace();
+//            }
+//        });
+//    }
 
     public String getBatchDirectoryName() {
 
@@ -176,22 +172,23 @@ public class MainActivity extends AppCompatActivity {
         return app_folder_path;
     }
 
-    private boolean allPermissionsGranted(){
+    private boolean allPermissionsGranted() {
 
-        for(String permission : REQUIRED_PERMISSIONS){
-            if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
         return true;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        if(requestCode == REQUEST_CODE_PERMISSIONS){
-            if(allPermissionsGranted()){
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
                 startCamera();
-            } else{
+            } else {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 this.finish();
             }
