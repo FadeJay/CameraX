@@ -17,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private Executor executor = Executors.newSingleThreadExecutor();
     private int REQUEST_CODE_PERMISSIONS = 1001;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
+    ImageCapture imageCapture;
 
     PreviewView mPreviewView;
-    ImageView captureImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +51,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPreviewView = findViewById(R.id.previewView);
-        captureImage = findViewById(R.id.captureImg);
 
         if(allPermissionsGranted()){
             startCamera(); //start camera if permission has been granted by user
         } else{
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CountDownTimer countDownTimer = new CountDownTimer(3000, 300) {
+            @Override
+            public void onTick(long l) {
+                try {
+                   takePic();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        }.start();
     }
 
     private void startCamera() {
@@ -85,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         CameraSelector cameraSelector = new CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
                 .build();
 
         ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
@@ -102,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             hdrImageCaptureExtender.enableExtension(cameraSelector);
         }
 
-        final ImageCapture imageCapture = builder
+         imageCapture = builder
                 .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
                 .build();
 
@@ -110,28 +130,32 @@ public class MainActivity extends AppCompatActivity {
 
         Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, preview, imageAnalysis, imageCapture);
 
-        captureImage.setOnClickListener(v -> {
 
-            SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
-            File file = new File(getBatchDirectoryName(), mDateFormat.format(new Date())+ ".jpg");
 
-            ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
-            imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback () {
-                @Override
-                public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "Image Saved successfully", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                @Override
-                public void onError(@NonNull ImageCaptureException error) {
-                    error.printStackTrace();
-                }
-            });
+    }
+
+    private void takePic(){
+        SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),  mDateFormat.format(new Date())+ ".jpg");
+
+        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
+        imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback () {
+            @Override
+            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "Image Saved successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            @Override
+            public void onError(@NonNull ImageCaptureException error) {
+                error.printStackTrace();
+            }
         });
+
+
     }
 
     public String getBatchDirectoryName() {
