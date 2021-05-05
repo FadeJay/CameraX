@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
-                .setTargetRotation(Surface.ROTATION_180)
                 .build();
 
         ImageCapture.Builder builder = new ImageCapture.Builder();
@@ -128,9 +127,10 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
 
-        Log.i("MainAc", "Rotation " + this.getWindowManager().getDefaultDisplay().getRotation());
+        Log.i("MainAc", "Rotation " +  preview.getTargetRotation());
 
         preview.setSurfaceProvider(mPreviewView.createSurfaceProvider());
+
 
         Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview, imageAnalysis, imageCapture);
 
