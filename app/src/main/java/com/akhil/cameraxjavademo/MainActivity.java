@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -123,12 +124,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
          imageCapture = builder
-                .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
+//                .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
                 .build();
 
         preview.setSurfaceProvider(mPreviewView.createSurfaceProvider());
 
         Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, preview, imageAnalysis, imageCapture);
+
+
 
 
 
