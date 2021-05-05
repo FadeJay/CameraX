@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Executor executor = Executors.newSingleThreadExecutor();
     private int REQUEST_CODE_PERMISSIONS = 1001;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
-
+    private ImageCapture imageCapture;
 
     PreviewView mPreviewView;
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTick(long l) {
                 try {
-//                    takePic();
+                    takePic();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                .setTargetRotation(Surface.ROTATION_180)
                 .build();
 
         ImageCapture.Builder builder = new ImageCapture.Builder();
@@ -123,8 +124,7 @@ public class MainActivity extends AppCompatActivity {
             hdrImageCaptureExtender.enableExtension(cameraSelector);
         }
 
-        ImageCapture imageCapture = builder
-                .setTargetRotation(Surface.ROTATION_180)
+        imageCapture = builder
                 .build();
 
 
@@ -137,28 +137,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    private void takePic() {
-//        SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
-//        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), mDateFormat.format(new Date()) + ".jpg");
-//
-//        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
-//        imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
-//            @Override
-//            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-//                new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(MainActivity.this, "Image Saved successfully", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(@NonNull ImageCaptureException error) {
-//                error.printStackTrace();
-//            }
-//        });
-//    }
+    private void takePic() {
+        SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), mDateFormat.format(new Date()) + ".jpg");
+
+        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
+        imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
+            @Override
+            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "Image Saved successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(@NonNull ImageCaptureException error) {
+                error.printStackTrace();
+            }
+        });
+
+
+    }
 
     public String getBatchDirectoryName() {
 
