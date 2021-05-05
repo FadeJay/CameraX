@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
          imageCapture = builder
                 .build();
+        imageCapture.setTargetRotation(Surface.ROTATION_180);
 
         Log.i("MainAc", "Rotation "+this.getWindowManager().getDefaultDisplay().getRotation() );
 
