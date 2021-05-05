@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
          imageCapture = builder
-                .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
+                .setTargetRotation(Surface.ROTATION_180)
                 .build();
 
         Log.i("MainAc", "Rotation "+this.getWindowManager().getDefaultDisplay().getRotation() );
