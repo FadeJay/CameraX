@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         CameraSelector cameraSelector = new CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
                 .build();
 
         ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
