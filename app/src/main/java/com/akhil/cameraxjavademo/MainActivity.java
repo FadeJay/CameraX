@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
     void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
 
         Preview preview = new Preview.Builder()
-                .setTargetRotation(Surface.ROTATION_180)
                 .build();
 
         CameraSelector cameraSelector = new CameraSelector.Builder()
@@ -126,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
          imageCapture = builder
-                .setTargetRotation(Surface.ROTATION_180)
                 .build();
 
         Log.i("MainAc", "Rotation "+this.getWindowManager().getDefaultDisplay().getRotation() );
