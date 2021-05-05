@@ -123,9 +123,10 @@ public class MainActivity extends AppCompatActivity {
             hdrImageCaptureExtender.enableExtension(cameraSelector);
         }
 
+        imageCapture.setTargetRotation(Surface.ROTATION_180);
          imageCapture = builder
                 .build();
-        imageCapture.setTargetRotation(Surface.ROTATION_180);
+
 
         Log.i("MainAc", "Rotation "+this.getWindowManager().getDefaultDisplay().getRotation() );
 
